@@ -92,7 +92,6 @@
         <div>
              <ucx1:MyUserControl11 runat="server" />
 
-<%@ Register TagPrefix="ucx" TagName="MyUserControl1" Src="~/header.ascx" %>
 
              <div class="container py-4 ">
         <div class="row justify-content-center" style="margin-top: 100px;">

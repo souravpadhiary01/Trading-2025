@@ -93,7 +93,7 @@ public partial class Transaction : System.Web.UI.Page
      string nomineeName, string whatsappNotification,
      string msgNotification, string emailNotification,
      string pic, string path, string picx, string pathx,
-     string picy, string pathy, string picz, string pathz)
+     string picy, string pathy, string picz, string pathz,string place)
     {
         try
         {
@@ -164,13 +164,13 @@ public partial class Transaction : System.Web.UI.Page
             ReferBy, Priority, Address, Status, ClientId, Password, 
             BankAccount, IFSC, AdhaarNumber, NomineeName, WhatsappNotification, 
             MsgNotification, EmailNotification, MyDocPath, AadhrPath, 
-            PanPath, BankDtlPath) 
+            PanPath, BankDtlPath,place) 
             VALUES 
             (@ClientName, @MobileNo, @JoiningDate, @WhatsappNo, @EmailId,
             @ReferBy, @Priority, @Address, @Status, @ClientId, @Password,
             @BankAccount, @IFSC, @AdhaarNumber, @NomineeName, @WhatsappNotification,
             @MsgNotification, @EmailNotification, @MyDocPath, @AadhrPath,
-            @PanPath, @BankDtlPath)";
+            @PanPath, @BankDtlPath,@place)";
 
                 using (SqlCommand cmd = new SqlCommand(insertQuery, con))
                 {

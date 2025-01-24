@@ -172,7 +172,6 @@
             width: 180px;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
     <script>
@@ -248,7 +247,8 @@
         const bankAccount = $('#bankAccount').val().trim();
         const IFSC = $('#IFSC').val().trim();
         const adhaarNumber = $('#adhaarNumber').val().trim();
-        const nomineeName = $('#nomineeName').val().trim();
+                const nomineeName = $('#nomineeName').val().trim();
+                const place = $('#place').val().trim();
 
         // Validation
         let isValid = true;
@@ -272,7 +272,8 @@
         if (!bankAccount) return showError($('#bankAccount'), 'Bank Account Number is required.');
         if (!IFSC) return showError($('#IFSC'), 'IFSC Code is required.');
         if (!adhaarNumber) return showError($('#adhaarNumber'), 'Adhaar Number is required.');
-        if (!nomineeName) return showError($('#nomineeName'), 'Nominee Name is required.');
+                if (!nomineeName) return showError($('#nomineeName'), 'Nominee Name is required.');
+                if (!place) return showError($('#place'), 'place is required.');
 
         // If all fields are valid
         if (isValid) {
@@ -310,6 +311,7 @@
                         'pathy:"' + $("#hiddeny").val() + '", ' +
                         'picz:"' + $("#hidenz").val() + '", ' +
                         'pathz:"' + $("#hiddenz").val() + '"' +
+                        'place:"' + $("#place").val() + '"' +
                         '}',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -392,6 +394,10 @@
                                     <label class="form-label fw-bold">Address:</label>
                                     <textarea class="form-control" id="address" placeholder="Enter Address" required></textarea>
                                 </div>
+                                 <div class="mb-3">
+     <label class="form-label fw-bold">Place:</label>
+     <input type="text" class="form-control" id="place" >
+ </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Status:</label>
                                     <input type="text" class="form-control" id="Status" placeholder=" Status" value ="Active" readonly></input>
@@ -403,50 +409,50 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Client ID:</label>
-                                    <input type="text" class="form-control" id="clientId" placeholder="Auto Generate">
+                                    <input type="text" class="form-control" id="clientId" placeholder="Auto Generate"/>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Password:</label>
-                                    <input type="password" class="form-control" id="password" placeholder="Enter Password" required>
+                                    <input type="password" class="form-control" id="password" placeholder="Enter Password" required/>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Bank Account:</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="bankAccount" placeholder="Enter Account Number" required>
+                                        <input type="text" class="form-control" id="bankAccount" placeholder="Enter Account Number" required/>
                                     </div>
                                     <label class="form-label fw-bold">IFSC Code</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="IFSC" placeholder="Enter IFSC Code" required>
+                                        <input type="text" class="form-control" id="IFSC" placeholder="Enter IFSC Code" required/>
                                     </div>
                                     <div class="input-group">
-                                        <input type="file" class="form-control file-input" id="fileInputBankAccount" required>
+                                        <input type="file" class="form-control file-input" id="fileInputBankAccount" required/>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Adhaar Number:</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="adhaarNumber" placeholder="Enter Adhaar Number" required>
+                                        <input type="text" class="form-control" id="adhaarNumber" placeholder="Enter Adhaar Number" required/>
                                     </div>
                                     <div class="input-group">
-                                        <input type="file" class="form-control file-input" id="fileInputAdhaar" required>
+                                        <input type="file" class="form-control file-input" id="fileInputAdhaar" required/>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Nominee:</label>
                                     <div class="input-group mb-2">
-                                        <input type="text" class="form-control" id="nomineeName" placeholder="Enter Nominee Name" required>
+                                        <input type="text" class="form-control" id="nomineeName" placeholder="Enter Nominee Name" required/>
                                     </div>
                                     <div class="input-group">
-                                        <input type="file" class="form-control file-input" id="fileInputNominee" required>
+                                        <input type="file" class="form-control file-input" id="fileInputNominee" required/>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Photo:</label>
                                     <div class="input-group">
-                                        <input type="file" class="form-control file-input" id="fileInputPhoto" required>
+                                        <input type="file" class="form-control file-input" id="fileInputPhoto" required/>
                                     </div>
                                 </div>
 
@@ -466,20 +472,18 @@
                                     <label class="form-label fw-bold me-auto">What's App Notification:</label>
                                     <div class="checkbox-wrapper-5">
                                         <div class="check">
-                                            <input id="whatsappNotification" type="checkbox">
+                                            <input id="whatsappNotification" type="checkbox"/>
                                             <label for="check-5"></label>
                                         </div>
                                     </div>
-                                    <%--                                    <input type="checkbox" class="form-check-input" id="whatsappNotification" checked>--%>
                                 </div>
                                 <div class="mb-3 d-flex align-items-center">
                                     <label class="form-label fw-bold me-auto">MSG Notification:</label>
 
-                                    <%--<input type="checkbox" class="form-check-input" id="msgNotification" checked>--%>
 
                                     <div class="checkbox-wrapper-5">
                                         <div class="check">
-                                            <input id="whatsappNotification" type="checkbox">
+                                            <input id="msgNotification" type="checkbox">
                                             <label for="check-5"></label>
                                         </div>
                                     </div>
@@ -487,11 +491,10 @@
                                 </div>
                                 <div class="mb-3 d-flex align-items-center">
                                     <label class="form-label fw-bold me-auto">Email Notifications:</label>
-                                    <%--<input type="checkbox" class="form-check-input" id="emailNotification">--%>
 
                                     <div class="checkbox-wrapper-5">
                                         <div class="check">
-                                            <input id="whatsappNotification" type="checkbox">
+                                            <input id="emailNotification" type="checkbox">
                                             <label for="check-5"></label>
                                         </div>
                                     </div>
