@@ -383,7 +383,7 @@
                 const currentTransection = $("#CurrentTransaction").val(); // Get the current transaction date
                 const transactionAmount = parseFloat($("#TransactionAmount").val()) || 0; // Transaction amount
 
-<<<<<<< HEAD
+
                 // Input validation
                 if (!clientID || !currentTransection) {
                     alert("Please provide both Client ID and Current Transaction date.");
@@ -452,12 +452,7 @@
 
 
 
-<<<<<<< HEAD
-          
-               
-=======
 
->>>>>>> 4db351834e4e3e06d9163f3bfc844a468fa9ec05
 
             $("#StartDate, #Term").on("change", function () {
                 // Get the start date value
@@ -670,15 +665,13 @@
 
 
 
-<<<<<<< HEAD
+
                                       
                                         <div class="mb-3">
                                             <label class="form-label fw-bold">Days For Investment:</label>
                                             <input type="number" class="form-control" id="DaysInvestment" required>
                                         </div>
 
-=======
->>>>>>> 4db351834e4e3e06d9163f3bfc844a468fa9ec05
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Current Transaction Start::</label>
                                         <input type="date" class="form-control" id="CurrentTransaction" required>
