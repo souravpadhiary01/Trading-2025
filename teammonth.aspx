@@ -94,67 +94,95 @@
         $(document).ready(function () {
 
 
-            // Open modal and populate fields on "Pay" button click
-            $('#paymentsTable').on('click', '.btn-primary', function () {
-                const row = $(this).closest('tr'); // Get the closest row of the clicked button
+            // Initialize modal
+            //const payModal = new bootstrap.Modal($('#payModal')[0]);
 
-                // Extract data from each cell in the row
-                const rowData = {
-                    memberId: row.find('td:nth-child(2)').text().trim(),
-                    memberName: row.find('td:nth-child(3)').text().trim(),
-                    memberPriority: row.find('td:nth-child(4)').text().trim(),
-                    clientFund: row.find('td:nth-child(5)').text().trim(),
-                    noOfClients: row.find('td:nth-child(6)').text().trim(),
-                    clientPayments: row.find('td:nth-child(7)').text().trim(),
-                    capitalExpiry: row.find('td:nth-child(8)').text().trim(),
-                };
+            // Open modal on "Pay" button click
+            $('.abcd').on('click', function () {
+                console.log("button clicked");
 
-                // Populate modal fields
-                $('#modalMemberId').val(rowData.memberId);
-                $('#modalMemberName').val(rowData.memberName);
-                $('#modalMemberpriority').val(rowData.memberPriority);
-                $('#modalclientfund').val(rowData.clientFund);
-                $('#modalNoclients').val(rowData.noOfClients);
-                $('#modalClientPayments').val(rowData.clientPayments);
-                $('#modalCapitalExpiry').val(rowData.capitalExpiry);
+                // Get the row data of the clicked button
+                var row = $(this).closest('tr');
+                var memberName = row.find('td').eq(2).text();  // Assuming Member Name is in 3rd column
+                var memberID = row.find('td').eq(1).text();    // Assuming Member ID is in 2nd column
+                var clientPayments = row.find('td').eq(6).text(); // Assuming Client Payments is in 7th column
+                var clientFund = row.find('td').eq(4).text();  // Assuming Client Fund is in 5th column
+
+                // Set the data in the modal form
+                $('#payMemberName').val(memberName);
+                $('#payMemberID').val(memberID);
+                $('#payClientPayments').val(clientPayments);
+                $('#payClientFund').val(clientFund);
 
                 // Show the modal
                 $('#payModal').modal('show');
             });
 
-            // Submit payment data
-            $('#submitPayment').on('click', function () {
-                const paymentData = {
-                    memberId: $('#modalMemberId').val(),
-                    memberName: $('#modalMemberName').val(),
-                    memberPriority: $('#modalMemberpriority').val(),
-                    clientFund: $('#modalclientfund').val(),
-                    noOfClients: $('#modalNoclients').val(),
-                    clientPayments: $('#modalClientPayments').val(),
-                    capitalExpiry: $('#modalCapitalExpiry').val(),
-                    remark: $('#modalRemark').val(),
+
+            // File input change event
+            $('.file-input').on('change', function () {
+                const inputId = $(this).attr('id');
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const base64Data = e.target.result; // Base64 encoded data
+                        const fileName = file.name; // File name
+
+                        if (inputId === 'payFileUpload') {
+                            $('#hiddenFileData').val(base64Data); // Set Base64 data
+                            $('#hiddenFileName').val(fileName); // Set file name
+                            console.log('File loaded successfully:', fileName);
+                        }
+                    };
+                    reader.readAsDataURL(file); // Read file as Base64
+                } else {
+                    alert('No file selected.');
+                }
+            });
+
+            // Button click event
+            $('#submitPay').on('click', function () {
+
+                const formData = {
+                    name: $('#payMemberName').val().trim(),
+                    memberid: $('#payMemberID').val().trim(),
+                    transctionamount: $('#payTransactionAmount').val().trim(),
+                    transctiontype: $('#payTransactionType').val().trim(),
+                    transctionby: $('#transctionby').val().trim(),
+                    payClientPayments: $('#payClientPayments').val().trim(),
+                    payClientFund: $('#payClientFund').val().trim(),
+                    remark: $('#payRemark').val().trim(),
+                    Uploadpicfile: $('#hiddenFileData').val(), // Hidden field for Base64 data
+                    Uploadpathfile: $('#hiddenFileName').val(), // Hidden field for file name
                 };
 
-                console.log('Submitting payment data:', paymentData);
+              
+              
 
-                // Add AJAX request to handle payment submission
+                console.log('Submitting data:', formData);
+
                 $.ajax({
                     type: 'POST',
-                    url: 'teammonth.aspx/SubmitPayment', // Replace with your backend URL
-                    data: JSON.stringify({ data: paymentData }),
+                    url: 'teammonth.aspx/InsertPaymodal',
+                    data: JSON.stringify({ data: formData }),
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     success: function (response) {
-                        alert(response.d || 'Payment submitted successfully!');
-                        $('#payModal').modal('hide'); // Hide the modal on success
+                        if (response.d.includes('successfully')) {
+                            alert('Team payment successfully!');
+                            location.reload(); // Reload page after success
+                        } else {
+                            alert(response.d);
+                        }
                     },
                     error: function (xhr, status, error) {
                         console.error('Error:', error);
-                        alert('An error occurred while submitting payment. Please try again.');
+                        alert('An error occurred while saving the data. Please try again.');
                     }
                 });
             });
-
+           
 
 
 
@@ -291,7 +319,7 @@
                             <td>1500,000.00</td>
                             <td class="capital-expiry">3000,000.00</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm">Pay</button></td>
+                                <button type="button" class="btn btn-primary btn-sm abcd">Pay</button></td>
                         </tr>
                         <tr>
                             <td>2</td>
@@ -303,13 +331,14 @@
                             <td>300,000.00</td>
                             <td class="capital-expiry">2500,000.00</td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-sm">Pay</button></td>
+                                <button type="button" class="btn btn-primary btn-sm abcd">Pay</button></td>
                         </tr>
                         <!-- Add other rows similarly -->
                     </tbody>
                 </table>
             </div>
-
+              <input type="hidden" id="hiddenFileData" />
+              <input type="hidden" id="hiddenFileName" />
             <!-- Transaction Modal -->
             <div class="modal fade" id="transactionModal" tabindex="-1">
                 <div class="modal-dialog modal-lg">
@@ -376,10 +405,86 @@
                     </div>
                 </div>
             </div>
+           
+             
             <!-- Pay Modal -->
- 
+<!-- Button to Open Pay Modal -->
+<%--<button type="button" class="btn btn-primary btn-sm abcd" data-bs-toggle="modal" data-bs-target="#payModal">Pay</button>--%>
 
+<!-- Pay Modal -->
+<!-- Button to Open Pay Modal -->
+<%--<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#payModal">Pay</button>--%>
+
+<!-- Pay Modal -->
+<div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="payModalLabel">Pay Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Member Name:</label>
+                                <input type="text" class="form-control" id="payMemberName" placeholder="Enter Member Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Member ID:</label>
+                                <input type="text" class="form-control" id="payMemberID" placeholder="Enter Member ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Transaction Amount:</label>
+                                <input type="text" class="form-control" id="payTransactionAmount" placeholder="Enter Transaction Amount">
+                            </div>
+                            <div class="form-group">
+                                <label>Transaction Type:</label>
+                                <select class="form-control" id="payTransactionType">
+                                    <option>New Capital</option>
+                                    <option>Profit</option>
+                                    <option>Capital Return / Profit</option>
+                                    <option>Capital Return</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Upload File:</label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control file-input" id="payFileUpload">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Client Payments:</label>
+                                <input type="text" class="form-control" id="payClientPayments" placeholder="Enter Client Payments">
+                            </div>
+                            <div class="form-group">
+                                <label>Client Fund:</label>
+                                <input type="text" class="form-control" id="payClientFund" placeholder="Enter Client Fund">
+                            </div>
+                            <div class="form-group">
+                                <label>Remark:</label>
+                                <textarea class="form-control" id="payRemark" placeholder="Add any remarks..."></textarea>
+                            </div>
+                        </div>
+                      
+                    </div>
+                    <div class="text-center">
+                        <button type="button" id="submitPay" class="btn btn-success">SubmitPay</button>
+                    </div>
+                </form>
+            </div>
         </div>
+    </div>
+</div>
+
+</div>
+
+
+         <div></div>
+       
     </form>
 </body>
 
