@@ -64,7 +64,7 @@ public class DATABASE
     public string getConstr()
     {
         if (cnstr == "")
-            cnstr = ConfigurationManager.ConnectionStrings["satsangdata"].ToString();
+            cnstr = ConfigurationManager.ConnectionStrings["tradedata"].ToString();
         return cnstr;
     }
     #endregion

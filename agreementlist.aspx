@@ -228,56 +228,66 @@ table a {
     </style>
 
 
-        <script>
-
-            $(document).ready(function () {
-                var table = $('#data-table').DataTable({
-                    pageLength: 20,
-                    responsive: true,
-                    dom: 'Bfrtip'
-                });
-
-                $('#status-filter').on('change', function () {
-                    const filterValue = $(this).val();
-                    table.column(6).search(filterValue).draw();
-                });
-
-
-
-                $.ajax({
-                    type: "POST",
-                    url: "agreementlist.aspx/GetAgreementData",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        var data = response.d; // Deserialize response data
-                        var tableBody = $("#data-table tbody");
-                        tableBody.empty(); // Clear existing rows
-
-                        // Iterate through the data and append to the table
-                        $.each(data, function (index, item) {
-                            var row = `<tr>
-                        <td>${index + 1}</td>
-                        <td>${item.AgreementID}</td>
-                        <td>${item.ClientName}</td>
-                        <td>${item.TotalFund}</td>
-                        <td>${item.Refer}</td>
-                        <td>${item.Priority}</td>
-                        <td>${(item.StartDate)}</td>
-                        <td>${(item.ExpireDate)}</td>
-                        <td>${item.ProfitClient}</td>
-                    </tr>`;
-                            tableBody.append(row);
-                        });
-                    },
-                    error: function (error) {
-                        console.error("Error fetching data:", error);
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable first without data
+        var table = $('#data-table').DataTable({
+            responsive: true,
+            pageLength: 20,
+            columns: [
+                { data: null, render: function (data, type, row, meta) { return meta.row + 1; } },
+                { data: 'AgreementID' },
+                { data: 'ClientName' },
+                { data: 'TotalFund', render: function (data) { return parseFloat(data).toFixed(2); } },
+                { data: 'Term' },
+                { data: 'Priority' },
+                { data: 'StartDate' },
+                { data: 'ExpireDate' },
+                { data: 'Status', defaultContent: 'Active' },
+                { data: 'Refer' },
+                { data: null, defaultContent: '0' },
+                {
+                    data: null,
+                    render: function (data) {
+                        return '<button onclick="viewDetails(\'' + data.AgreementID + '\')">View</button>';
                     }
-                });
-            });
+                }
+            ]
+        });
 
+        // Fetch and populate data
+        $.ajax({
+            type: "POST",
+            url: "agreementlist.aspx/GetAgreementData",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var data = response.d;
+                console.log("Fetched Data:", data);
 
-        </script>
+                // Clear existing data
+                table.clear();
+
+                // Add new data and redraw
+                table.rows.add(data).draw();
+            },
+            error: function (error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    });
+
+    function viewDetails(agreementID) {
+        // Handle view details action
+        window.location.href = 'agreementdetails.aspx?id=' + agreementID;
+    }
+    function viewDetails(agreementID) {
+        alert("View details for Agreement ID: " + agreementID);
+    }
+    function viewDetails(agreementID) {
+        alert("View details for Agreement ID: " + agreementID);
+    }
+</script>
 
 
 
@@ -310,13 +320,13 @@ table a {
                 <th>Agreement ID</th>
                 <th>Client Name</th>
                 <th>Funds</th>
-                <th>Team</th>
+                <th>Term</th>
                 <th>Priority</th>
                 <th>Start Date</th>
                 <th>Expiry Date</th>
                 <th>Status</th>
-                <th>Total Profit</th>
-                <th>Referred By</th>
+                <th>Referred BY</th>
+                <th>No of Payment</th>              
                 <th>Action</th>
             </tr>
         </thead>

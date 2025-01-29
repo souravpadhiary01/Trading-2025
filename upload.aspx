@@ -8,8 +8,8 @@
 <head runat="server">
     <title>Register New Investor</title>
     <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
-    <ucx:MyUserControl1 runat="server" />
+   <%-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" />
+    <ucx:MyUserControl1 runat="server" />--%>
 
     <style>
       

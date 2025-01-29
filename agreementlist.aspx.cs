@@ -21,10 +21,7 @@ using System.Web.Script.Services;
 
 public partial class agreementlist : System.Web.UI.Page
 {
-    protected void Page_Load(object sender, EventArgs e)
-    {
-
-    }
+    protected void Page_Load(object sender, EventArgs e) { }
 
     public class AgreementData
     {
@@ -35,19 +32,19 @@ public partial class agreementlist : System.Web.UI.Page
         public string Priority { get; set; }
         public string StartDate { get; set; }
         public string ExpireDate { get; set; }
-        public decimal ProfitClient { get; set; }
+        public string Term { get; set; }
+       
     }
+
     [WebMethod]
     public static List<AgreementData> GetAgreementData()
     {
         List<AgreementData> agreementDataList = new List<AgreementData>();
 
         string connString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
-
-
-        string query = @"SELECT  [ClientName], [AgreementID], [TotalFund], 
-                         [refer], [Priority], [StartDate], [expireDate], [profitclient]
-                         FROM [tradedata].[tradeadmin].[aggrement]";
+        string query = @"SELECT [ClientName], [AgreementID], [TotalFund], [Term],  
+                    [refer], [Priority], [StartDate], [expireDate]  
+                    FROM [tradedata].[tradeadmin].[aggrement]";
 
         using (SqlConnection con = new SqlConnection(connString))
         {
@@ -58,24 +55,23 @@ public partial class agreementlist : System.Web.UI.Page
                 {
                     while (reader.Read())
                     {
-                        AgreementData data = new AgreementData
+                        agreementDataList.Add(new AgreementData
                         {
                             ClientName = reader["ClientName"].ToString(),
                             AgreementID = reader["AgreementID"].ToString(),
                             TotalFund = reader["TotalFund"] != DBNull.Value ? Convert.ToDecimal(reader["TotalFund"]) : 0,
                             Refer = reader["refer"].ToString(),
                             Priority = reader["Priority"].ToString(),
-                            StartDate = Convert.ToDateTime(reader["StartDate"]).ToString("dd-MM-yyyy"),
-                            ExpireDate = Convert.ToDateTime(reader["expireDate"]).ToString("dd-MM-yyyy"),
-                            ProfitClient = reader["profitclient"] != DBNull.Value ? Convert.ToDecimal(reader["profitclient"]) : 0
-                        };
-
-                        agreementDataList.Add(data);
+                            StartDate = reader["StartDate"] != DBNull.Value ? Convert.ToDateTime(reader["StartDate"]).ToString("dd-MM-yyyy") : "",
+                            ExpireDate = reader["expireDate"] != DBNull.Value ? Convert.ToDateTime(reader["expireDate"]).ToString("dd-MM-yyyy") : "",
+                            Term = reader["Term"].ToString(),
+                            
+                        });
                     }
                 }
             }
         }
-
         return agreementDataList;
     }
+
 }

@@ -12,7 +12,7 @@
     <ucx:MyUserControl1 runat="server" />
 
     <style>
-        <style >
+    <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -198,6 +198,7 @@
                     const data = response.d;
                     const tableBody = $("#data-table tbody");
                     tableBody.empty(); // Clear existing rows
+
 
                     // Populate rows with data
                     $.each(data, function (index, item) {
