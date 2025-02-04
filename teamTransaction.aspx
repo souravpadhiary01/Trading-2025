@@ -12,9 +12,7 @@
         <ucx:MyUserControl1 runat="server" />
 
     <title></title>
-
-
-       <style>
+  <style>
         .card {
             background: white;
             padding: 15px;

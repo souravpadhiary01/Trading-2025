@@ -13,7 +13,7 @@ using System.Web.UI.WebControls;
 
 public partial class agreementDetails : System.Web.UI.Page
 {
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
 
@@ -240,7 +240,7 @@ public partial class agreementDetails : System.Web.UI.Page
                 bool isUploaded = UploadFileToFtp(data.fileData, data.fileName);
                 if (isUploaded)
                 {
-                    filePathInDatabase = string.Format("https://msksoftware.co.in/forestdoc/{0}", data.fileName);
+                    filePathInDatabase = string.Format("https://msksoftware.co.in/tradingdoc/{0}", data.fileName);
                 }
                 else
                 {

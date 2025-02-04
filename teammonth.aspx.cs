@@ -11,7 +11,7 @@ using System.Web.Services;
 public partial class teammonth : System.Web.UI.Page
 {
     // FTP configuration
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
     private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
@@ -111,7 +111,7 @@ public partial class teammonth : System.Web.UI.Page
                 if (response.StatusCode == FtpStatusCode.ClosingData)
                 {
                     Debug.WriteLine("File uploaded successfully: " + fileName);
-                    return "https://msksoftware.co.in/forestdoc/" + fileName;
+                    return "https://msksoftware.co.in/tradingdoc/" + fileName;
                 }
                 else
                 {
@@ -237,7 +237,7 @@ public partial class teammonth : System.Web.UI.Page
                 if (response.StatusCode == FtpStatusCode.ClosingData)
                 {
                     Debug.WriteLine("File uploaded successfully: " + fileName);
-                    return "https://msksoftware.co.in/forestdoc/" + fileName;
+                    return "https://msksoftware.co.in/tradingdoc/" + fileName;
                 }
                 else
                 {

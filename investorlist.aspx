@@ -11,8 +11,7 @@
     <ucx:MyUserControl1 runat="server" />
 
 
-
-    <style>
+ <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -183,68 +182,74 @@
     </style>
 
 
-    <script>
-        $(document).ready(function () {
-            // Initialize DataTable with server-side processing disabled
-            var table = $('#datatable').DataTable({
-                pageLength: 5,
-                responsive: true,
-                dom: 'Bfrtip', // Controls buttons, filters, etc.
-            });
-
-            // Handle status filter dropdown
-            $('#status-filter').on('change', function () {
-                const filterValue = $(this).val();
-                table.column(6).search(filterValue).draw(); // Apply search to the "Status" column
-            });
-
-            // Redirect to register investor page
-            $('.register-btn').on('click', function () {
-                window.location.href = 'Transaction.aspx';
-            });
-
-            // Fetch and populate data dynamically via AJAX
-            $.ajax({
-                type: "POST",
-                url: "investorlist.aspx/GetClientData",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    var data = response.d.data;
-
-                    // Clear existing rows in DataTable
-                    table.clear();
-
-                    // Add rows dynamically to DataTable using its API
-                    $.each(data, function (index, item) {
-                        table.row.add([
-                            index + 1,
-                            item.ClientId,
-                            item.ClientName,
-                            item.ActiveFunds || "-",
-                            item.JoiningDate,
-                            item.Mobile,
-                            item.Status,
-                            item.Place,
-                            item.ReferBy,
-                            item.ActiveDocuments ? "Yes" : "No",
-                            `<button type="button" class="btn btn-primary btn-sm">
-                        <a href="profile.aspx?ClientId=${item.ClientId}" style="color: #fff; text-decoration: none;">View</a>
-                    </button>`
-                        ]);
-                    });
-
-                    // Redraw DataTable to update the UI
-                    table.draw();
-                },
-                error: function (err) {
-                    console.error("Error fetching data:", err);
-                }
-            });
+<script>
+    $(document).ready(function () {
+        // Initialize DataTable with server-side processing disabled
+        var table = $('#datatable').DataTable({
+            pageLength: 5,
+            responsive: true,
+            dom: 'Bfrtip', // Controls buttons, filters, etc.
         });
 
-    </script>
+        // Handle status filter dropdown
+        $('#status-filter').on('change', function () {
+            const filterValue = $(this).val();
+            table.column(6).search(filterValue).draw(); // Apply search to the "Status" column
+        });
 
+        // Redirect to register investor page
+        $('.register-btn').on('click', function () {
+            window.location.href = 'Transaction.aspx';
+        });
+
+        // Fetch and populate data dynamically via AJAX
+        $.ajax({
+            type: "POST",
+            url: "investorlist.aspx/GetClientData",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var data = response.d.data;
+
+                // Clear existing rows in DataTable
+                table.clear();
+
+                // Add rows dynamically to DataTable using its API
+                $.each(data, function (index, item) {
+                    table.row.add([
+                        index + 1,
+                        item.ClientId,
+                        item.ClientName,
+                        item.ActiveFunds || "-",
+                        item.JoiningDate,
+                        item.Mobile,
+                        item.Status,
+                        item.Place,
+                        item.ReferBy,
+                        item.ActiveDocuments ? "Yes" : "No",
+                        `<button type="button" class="btn btn-primary btn-sm view-profile" data-clientid="${item.ClientId}">
+                    View
+                </button>`
+                    ]);
+                });
+
+                // Redraw DataTable to update the UI
+                table.draw();
+            },
+            error: function (err) {
+                console.error("Error fetching data:", err);
+            }
+        });
+
+        // Event delegation for dynamically added buttons
+        $(document).on("click", ".view-profile", function () {
+            var clientId = $(this).data("clientid");
+            sessionStorage.setItem("ClientId", clientId); // Store ClientId in sessionStorage
+            window.location.href = "profile.aspx"; // Navigate without query string
+        });
+    });
+
+</script>
 
 </head>
 <body>

@@ -10,8 +10,7 @@
     <title>create agreement</title>
 
     <ucx:MyUserControl1 runat="server" />
-
-    <style>
+ <style>
     <style>
         body {
             font-family: 'Arial', sans-serif;

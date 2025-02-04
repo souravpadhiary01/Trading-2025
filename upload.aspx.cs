@@ -10,7 +10,7 @@ using System.Web.Services;
 
 public partial class upload : System.Web.UI.Page
 {
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
 
@@ -79,7 +79,7 @@ public partial class upload : System.Web.UI.Page
                 bool picUploaded = UploadFileToFtp(pic, path);
                 if (picUploaded)
                 {
-                    picFilePath = "https://msksoftware.co.in/forestdoc/" + path;
+                    picFilePath = "https://msksoftware.co.in/tradingdoc/" + path;
                 }
                 else
                 {

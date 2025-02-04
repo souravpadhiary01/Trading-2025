@@ -265,132 +265,7 @@
             <td>76,000.00</td>
             <td><a href="#">Download</a></td>
         </tr>
-        <tr>
-            <td>02</td>
-            <td>04-12-2024</td>
-            <td>200,000.00</td>
-            <td>8,000.00</td>
-            <td>28,000.00</td>
-            <td>36,000.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>03</td>
-            <td>15-11-2024</td>
-            <td>300,000.00</td>
-            <td>12,000.00</td>
-            <td>40,000.00</td>
-            <td>52,000.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>04</td>
-            <td>02-10-2024</td>
-            <td>400,000.00</td>
-            <td>16,000.00</td>
-            <td>48,000.00</td>
-            <td>64,000.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>05</td>
-            <td>20-09-2024</td>
-            <td>250,000.00</td>
-            <td>10,000.00</td>
-            <td>35,000.00</td>
-            <td>45,000.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>06</td>
-            <td>12-08-2024</td>
-            <td>150,000.00</td>
-            <td>6,000.00</td>
-            <td>22,000.00</td>
-            <td>28,000.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>07</td>
-            <td>30-07-2024</td>
-            <td>350,000.00</td>
-            <td>14,000.00</td>
-            <td>45,000.00</td>
-            <td>59,000.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>08</td>
-            <td>18-06-2024</td>
-            <td>280,000.00</td>
-            <td>11,200.00</td>
-            <td>38,000.00</td>
-            <td>49,200.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>09</td>
-            <td>05-05-2024</td>
-            <td>320,000.00</td>
-            <td>12,800.00</td>
-            <td>42,000.00</td>
-            <td>54,800.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>10</td>
-            <td>22-04-2024</td>
-            <td>420,000.00</td>
-            <td>16,800.00</td>
-            <td>54,000.00</td>
-            <td>70,800.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>11</td>
-            <td>10-03-2024</td>
-            <td>390,000.00</td>
-            <td>15,600.00</td>
-            <td>51,000.00</td>
-            <td>66,600.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>12</td>
-            <td>28-02-2024</td>
-            <td>260,000.00</td>
-            <td>10,400.00</td>
-            <td>36,000.00</td>
-            <td>46,400.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>13</td>
-            <td>18-01-2024</td>
-            <td>380,000.00</td>
-            <td>15,200.00</td>
-            <td>50,000.00</td>
-            <td>65,200.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>14</td>
-            <td>05-12-2023</td>
-            <td>310,000.00</td>
-            <td>12,400.00</td>
-            <td>41,000.00</td>
-            <td>53,400.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
-        <tr>
-            <td>15</td>
-            <td>25-11-2023</td>
-            <td>240,000.00</td>
-            <td>9,600.00</td>
-            <td>34,000.00</td>
-            <td>43,600.00</td>
-            <td><a href="#">Download</a></td>
-        </tr>
+      
     </tbody>
 </table>
 
@@ -412,15 +287,111 @@
     <script>
         $(document).ready(function () {
             var table = $('#data-table').DataTable({
-                pageLength: 5,
+                pageLength: 10, // Default page length
                 responsive: true,
-                dom: 'Bfrtip'
+                dom: 'Bfrtip',
+                lengthMenu: [10, 25, 50, 100] // Page length options
             });
+
+            $('.tab-btn').click(function () {
+                $('.tab-btn').removeClass('active');
+                $(this).addClass('active');
+                $('.table-container table').hide();
+                $($(this).data('target')).show();
+            });
+
+
+
 
             $('#status-filter').on('change', function () {
                 const filterValue = $(this).val();
                 table.column(6).search(filterValue).draw();
             });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const clientId = urlParams.get('ClientId');
+
+            if (clientId) {
+                // Fetch client data from the server
+                $.ajax({
+                    type: "POST",
+                    url: "profile.aspx/GetClientDetails",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ clientId: clientId }),
+                    dataType: "json",
+                    success: function (response) {
+                        const data = response.d;
+
+                        if (data && data.length > 0) {
+                            const client = data[0];
+
+                            // Populate the profile details
+                            $(".profile-details").html(`
+                    <h2>Client Details</h2>
+                    <p><strong>Client Name:</strong> ${client.ClientName}</p>
+                    <p><strong>Client ID:</strong> ${clientId}</p>
+                    <p><strong>Joining Date:</strong> ${client.JoiningDate}</p>
+                    <p><strong>Refer By:</strong> ${client.ReferBy}</p>
+                    <p><strong>Mobile:</strong> ${client.MobileNo}</p>
+                    <p><strong>Nominee:</strong> ${client.NomineeName}</p>
+                    <p><strong>District:</strong> ${client.District}</p>
+
+                    <button>Edit</button>
+                `);
+                        } else {
+                            alert("No data found for the provided Client ID.");
+                        }
+                    },
+                    error: function (err) {
+                        console.error("Error fetching client details:", err);
+                    }
+                });
+            } else {
+
+            }
+
+            if (clientId) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "profile.aspx/GetAgreementsByClientId",
+                    data: JSON.stringify({ clientId: clientId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        const agreements = response.d;
+
+                        let tableBody = "";
+
+
+                        agreements.forEach((agreement, index) => {
+                            tableBody += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${agreement.AgreementID}</td>
+                                 <td>${agreement.TotalFund}</td> 
+                                 <td>${agreement.Term}</td>
+                                   <td>${agreement.StartDate}</td>
+                                   <td>${agreement.ExpireDate}</td>
+                                     <td>${agreement.Priority}</td>
+                                      <td>${agreement.Status}</td>
+                                      <td>${agreement.NoOfPayments}</td>
+<td><button type="button" class="btn btn-primary btn-sm action-button" onclick="window.location.href='agreementDetails.aspx?AgreementID=${agreement.AgreementID}'">Action</button></td>
+
+
+                            </tr>`
+                        });
+
+                        $("#data-table tbody").html(tableBody);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching data:", error.responseText);
+                    }
+                });
+            } else {
+                console.error("ClientId not found in the URL.");
+            }
+
         });
     </script>
 </body>

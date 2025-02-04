@@ -27,7 +27,7 @@ using System.Web.Script.Services;
 public partial class Member : System.Web.UI.Page
 
 {
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
     protected void Page_Load(object sender, EventArgs e)
@@ -104,7 +104,7 @@ public partial class Member : System.Web.UI.Page
                 bool isPhotoUploaded = UploadFileToFtp(pic, path);
                 if (isPhotoUploaded)
                 {
-                    PhotoPath = "https://msksoftware.co.in/forestdoc/" + path;
+                    PhotoPath = "https://msksoftware.co.in/tradingdoc/" + path;
                 }
                 else
                 {
@@ -118,7 +118,7 @@ public partial class Member : System.Web.UI.Page
                 bool isAadharUploaded = UploadFileToFtp(picx, pathx);
                 if (isAadharUploaded)
                 {
-                    AadhrPath = "https://msksoftware.co.in/forestdoc/" + pathx;
+                    AadhrPath = "https://msksoftware.co.in/tradingdoc/" + pathx;
                 }
                 else
                 {
@@ -132,7 +132,7 @@ public partial class Member : System.Web.UI.Page
                 bool isBankDetailsUploaded = UploadFileToFtp(picy, pathy);
                 if (isBankDetailsUploaded)
                 {
-                    BankDtlPath = "https://msksoftware.co.in/forestdoc/" + pathy;
+                    BankDtlPath = "https://msksoftware.co.in/tradingdoc/" + pathy;
                 }
                 else
                 {

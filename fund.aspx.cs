@@ -13,7 +13,7 @@ using System.Web.UI.WebControls;
 public partial class fund : System.Web.UI.Page
 {
 
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
 
@@ -178,7 +178,7 @@ public partial class fund : System.Web.UI.Page
             }
 
             // File successfully uploaded, save path in the database
-            string filePathInDatabase = string.Format("https://msksoftware.co.in/forestdoc/{0}", fileName);
+            string filePathInDatabase = string.Format("https://msksoftware.co.in/tradingdoc/{0}", fileName);
 
             string constr = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
             using (SqlConnection con = new SqlConnection(constr))

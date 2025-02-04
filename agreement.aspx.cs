@@ -16,7 +16,7 @@ using System.Security.Cryptography;
 
 public partial class agreement : System.Web.UI.Page
 {
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
     protected void Page_Load(object sender, EventArgs e)
@@ -99,7 +99,7 @@ public partial class agreement : System.Web.UI.Page
             return string.Empty;
         }
 
-        return string.Format("https://msksoftware.co.in/httpdocs/forestdoc/{0}profile.{1}", pathParts[0], pathParts[1]);
+        return string.Format("https://msksoftware.co.in/httpdocs/tradingdoc/{0}profile.{1}", pathParts[0], pathParts[1]);
     }
 
     public class AgreementDetails
@@ -149,7 +149,7 @@ public partial class agreement : System.Web.UI.Page
                 bool picUploaded = UploadFileToFtp(formData.Pic, formData.Path);
                 if (picUploaded)
                 {
-                    picFilePath = "https://msksoftware.co.in/forestdoc/" + formData.Path;
+                    picFilePath = "https://msksoftware.co.in/tradingdoc/" + formData.Path;
                 }
                 else
                 {

@@ -26,7 +26,7 @@ using System.IdentityModel.Protocols.WSTrust;
 
 public partial class Transaction : System.Web.UI.Page
 {
-    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/forestdoc/";
+    private const string FtpFolder = "ftp://msksoftware.co.in/httpdocs/tradingdoc/";
     private const string FtpUsername = "mskuser";
     private const string FtpPassword = "Swadhin@#12";
 
@@ -123,7 +123,7 @@ public partial class Transaction : System.Web.UI.Page
             string BankDtlPath = string.Empty;
             string PanPath = string.Empty;
 
-            string baseUrl = "https://msksoftware.co.in/forestdoc/";
+            string baseUrl = "https://msksoftware.co.in/tradingdoc/";
 
             // Upload files
             if (!string.IsNullOrEmpty(pic) && !string.IsNullOrEmpty(path))

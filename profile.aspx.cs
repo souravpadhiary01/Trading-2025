@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.Services;
 using System.Configuration;
+using System.Web.Script.Serialization;
 
 public partial class profile : System.Web.UI.Page
 {
-    protected void Page_Load(object sender, EventArgs e)
-    {
-
-    }
+    protected void Page_Load(object sender, EventArgs e) { }
 
     public class ClientDetail : IDisposable
     {
-        // Properties
         public string ClientName { get; set; }
         public string MobileNo { get; set; }
         public string JoiningDate { get; set; }
@@ -25,49 +18,27 @@ public partial class profile : System.Web.UI.Page
         public string NomineeName { get; set; }
         public string District { get; set; }
 
-
-
-        // To keep track of whether Dispose has been called.
         private bool disposed = false;
 
-        // Constructor
-        public ClientDetail()
-        {
-            // Initialize any resources if needed (although none are necessary in this case).
-        }
-
-        // Implement IDisposable to free resources
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        // Protected Dispose method for resource cleanup
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
             {
-                if (disposing)
-                {
-                    // Dispose managed resources (if any).
-                    // No managed resources to dispose in this class, but this is the place to do so if needed.
-                }
-
-                // Dispose unmanaged resources (if any).
-                // No unmanaged resources to dispose in this class.
-
                 disposed = true;
             }
         }
 
-        // Destructor (finalizer)
         ~ClientDetail()
         {
             Dispose(false);
         }
     }
-
 
     [WebMethod]
     public static IEnumerable<ClientDetail> GetClientDetails(string clientId)
@@ -75,9 +46,9 @@ public partial class profile : System.Web.UI.Page
         string connectionString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
 
         string query = @"SELECT [ClientName], [MobileNo], [JoiningDate], 
-                     [ReferBy], [NomineeName], [Address]
-                     FROM [tradedata].[tradeadmin].[registrations] 
-                     WHERE [ClientId] = @ClientId";
+                         [ReferBy], [NomineeName], [Address]
+                         FROM [tradedata].[tradeadmin].[registrations] 
+                         WHERE [ClientId] = @ClientId";
 
         var clientDetails = new List<ClientDetail>();
 
@@ -93,13 +64,14 @@ public partial class profile : System.Web.UI.Page
                     {
                         clientDetails.Add(new ClientDetail
                         {
-                            ClientName = reader["ClientName"].ToString(),
-                            MobileNo = reader["MobileNo"].ToString(),
-                            JoiningDate = Convert.ToDateTime(reader["JoiningDate"]).ToString("dd-MM-yyyy"),
-                            ReferBy = reader["ReferBy"].ToString(),
-                            NomineeName = reader["NomineeName"].ToString(),
-                            District = reader["Address"].ToString(),
-
+                            ClientName = reader["ClientName"] as string ?? "N/A",
+                            MobileNo = reader["MobileNo"] as string ?? "N/A",
+                            JoiningDate = !reader.IsDBNull(reader.GetOrdinal("JoiningDate"))
+                                ? Convert.ToDateTime(reader["JoiningDate"]).ToString("dd-MM-yyyy")
+                                : "N/A",
+                            ReferBy = reader["ReferBy"] as string ?? "N/A",
+                            NomineeName = reader["NomineeName"] as string ?? "N/A",
+                            District = reader["Address"] as string ?? "N/A",
                         });
                     }
                 }
@@ -118,7 +90,6 @@ public partial class profile : System.Web.UI.Page
         public string ExpireDate { get; set; }
         public string Priority { get; set; }
         public string Status { get; set; }
-        public int NoOfPayments { get; set; }
     }
 
     [WebMethod]
@@ -128,39 +99,19 @@ public partial class profile : System.Web.UI.Page
         string connectionString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
 
         string query = @"
-    WITH LatestTransactions AS (
-    SELECT 
-        [AgreementID],
-        [TransactionAmount],
-        [TotalFund],
-        [Term],
-        [StartDate],
-        [ExpireDate],
-        [Priority],
-        [CreatedDate],
-        ROW_NUMBER() OVER (PARTITION BY [AgreementID] ORDER BY [CreatedDate] DESC) AS rn
-    FROM 
-        [tradedata].[tradeadmin].[aggrement]
-    WHERE 
-        [ClientId] = @ClientId
-)
-SELECT 
-    [AgreementID],
-    [TotalFund],
-    [Term],
-    [StartDate],
-    [ExpireDate],
-    [Priority],
-    (SELECT COUNT(*) 
-     FROM [tradedata].[tradeadmin].[aggrement] AS sub 
-     WHERE sub.[AgreementID] = main.[AgreementID]) AS NoOfPayments
-FROM 
-    LatestTransactions main
-WHERE 
-    rn = 1 
-ORDER BY 
-    [CreatedDate] DESC;";
-
+            SELECT 
+                AgreementID, 
+                TotalFund, 
+                Term, 
+                StartDate, 
+                ExpireDate, 
+                Priority, 
+                CASE 
+                    WHEN GETDATE() BETWEEN StartDate AND ExpireDate THEN 'Running'
+                    ELSE 'Expired'
+                END AS Status
+            FROM tradedata.tradeadmin.aggrement
+            WHERE ClientId = @ClientId";
 
         try
         {
@@ -175,19 +126,21 @@ ORDER BY
                     {
                         while (reader.Read())
                         {
-                            var currentDate = DateTime.Now;
                             agreements.Add(new AgreementDetails
                             {
-                                AgreementID = reader["AgreementID"].ToString(),
-                                TotalFund = Convert.ToDecimal(reader["TotalFund"]),
-                                Term = reader["Term"].ToString(),
-                                StartDate = Convert.ToDateTime(reader["StartDate"]).ToString("dd/MM/yyyy"),
-                                ExpireDate = Convert.ToDateTime(reader["ExpireDate"]).ToString("dd/MM/yyyy"),
-                                Priority = reader["Priority"].ToString(),
-                                Status = Convert.ToDateTime(reader["StartDate"]) <= currentDate && Convert.ToDateTime(reader["ExpireDate"]) >= currentDate
-                ? "Running"
-                : "Expired",
-                                NoOfPayments = Convert.ToInt32(reader["NoOfPayments"])
+                                AgreementID = reader["AgreementID"] as string ?? "N/A",
+                                TotalFund = !reader.IsDBNull(reader.GetOrdinal("TotalFund"))
+                                    ? Convert.ToDecimal(reader["TotalFund"])
+                                    : 0m,
+                                Term = reader["Term"] as string ?? "N/A",
+                                StartDate = !reader.IsDBNull(reader.GetOrdinal("StartDate"))
+                                    ? Convert.ToDateTime(reader["StartDate"]).ToString("dd/MM/yyyy")
+                                    : "N/A",
+                                ExpireDate = !reader.IsDBNull(reader.GetOrdinal("ExpireDate"))
+                                    ? Convert.ToDateTime(reader["ExpireDate"]).ToString("dd/MM/yyyy")
+                                    : "N/A",
+                                Priority = reader["Priority"] as string ?? "N/A",
+                                Status = reader["Status"] as string ?? "N/A"
                             });
                         }
                     }
@@ -196,10 +149,82 @@ ORDER BY
         }
         catch (Exception ex)
         {
-            // Log the exception (Consider using a logging framework like log4net or NLog)
             throw new Exception("Error fetching agreements: " + ex.Message, ex);
         }
 
         return agreements;
+    }
+
+    [WebMethod]
+    public static object GetTransactionHistory(string clientId)
+    {
+        if (string.IsNullOrEmpty(clientId))
+        {
+            return new { success = false, message = "Client ID is required!" };
+        }
+
+        List<Transaction> transactions = new List<Transaction>();
+        string connectionString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
+
+        try
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                string query = @"
+                SELECT 
+                    a.AgreementId,
+                    a.DepositAmount,
+                    a.DepositDate,
+                    a.WithdrawalAmount,
+                    a.WithdrawalDate,
+                    a.ActiveFund,
+                    a.Profit
+                FROM tradedata.tradeadmin.FundManagement a
+                LEFT JOIN tradedata.tradeadmin.aggrement b
+                ON a.AgreementId = b.AgreementID 
+                WHERE b.ClientId = @ClientId";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@ClientId", clientId);
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            transactions.Add(new Transaction
+                            {
+                                AgreementId = reader["AgreementId"].ToString(),
+                                DepositAmount = reader["DepositAmount"] != DBNull.Value ? Convert.ToDecimal(reader["DepositAmount"]) : 0,
+                                DepositDate = reader["DepositDate"] != DBNull.Value ? Convert.ToDateTime(reader["DepositDate"]).ToString("yyyy-MM-dd") : "",
+                                WithdrawalAmount = reader["WithdrawalAmount"] != DBNull.Value ? Convert.ToDecimal(reader["WithdrawalAmount"]) : 0,
+                                WithdrawalDate = reader["WithdrawalDate"] != DBNull.Value ? Convert.ToDateTime(reader["WithdrawalDate"]).ToString("yyyy-MM-dd") : "",
+                                ActiveFund = reader["ActiveFund"] != DBNull.Value ? Convert.ToDecimal(reader["ActiveFund"]) : 0,
+                                Profit = reader["Profit"] != DBNull.Value ? Convert.ToDecimal(reader["Profit"]) : 0
+                            });
+                        }
+                    }
+                }
+            }
+
+            return new { success = true, data = transactions };
+        }
+        catch (Exception ex)
+        {
+            // Log the error (optional)
+            return new { success = false, message = "Error fetching transactions: " + ex.Message };
+        }
+    }
+
+    public class Transaction
+    {
+        public string AgreementId { get; set; }
+        public decimal DepositAmount { get; set; }
+        public string DepositDate { get; set; }
+        public decimal WithdrawalAmount { get; set; }
+        public string WithdrawalDate { get; set; }
+        public decimal ActiveFund { get; set; }
+        public decimal Profit { get; set; }
     }
 }

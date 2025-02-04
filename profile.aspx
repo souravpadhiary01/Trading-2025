@@ -9,115 +9,7 @@
 <head runat="server">
        <ucx:MyUserControl1 runat="server" />
     <title></title>
-       
-
-
-      
-    <script>
-        $(document).ready(function () {
-            var table = $('#data-table').DataTable({
-                pageLength: 10, // Default page length
-                responsive: true,
-                dom: 'Bfrtip',
-                lengthMenu: [10, 25, 50, 100] // Page length options
-            });
-
-
-            $('#status-filter').on('change', function () {
-                const filterValue = $(this).val();
-                table.column(6).search(filterValue).draw();
-            });
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const clientId = urlParams.get('ClientId');
-
-            if (clientId) {
-                // Fetch client data from the server
-                $.ajax({
-                    type: "POST",
-                    url: "profile.aspx/GetClientDetails",
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify({ clientId: clientId }),
-                    dataType: "json",
-                    success: function (response) {
-                        const data = response.d;
-
-                        if (data && data.length > 0) {
-                            const client = data[0]; 
-
-                            // Populate the profile details
-                            $(".profile-details").html(`
-                    <h2>Client Details</h2>
-                    <p><strong>Client Name:</strong> ${client.ClientName}</p>
-                    <p><strong>Client ID:</strong> ${clientId}</p>
-                    <p><strong>Joining Date:</strong> ${client.JoiningDate}</p>
-                    <p><strong>Refer By:</strong> ${client.ReferBy}</p>
-                    <p><strong>Mobile:</strong> ${client.MobileNo}</p>
-                    <p><strong>Nominee:</strong> ${client.NomineeName}</p>
-                    <p><strong>District:</strong> ${client.District}</p>
-
-                    <button>Edit</button>
-                `);
-                        } else {
-                            alert("No data found for the provided Client ID.");
-                        }
-                    },
-                    error: function (err) {
-                        console.error("Error fetching client details:", err);
-                    }
-                });
-            } else {
-                alert("Client ID not provided in the URL.");
-            }
-
-            if (clientId) {
-
-                $.ajax({
-                    type: "POST",
-                    url: "profile.aspx/GetAgreementsByClientId",
-                    data: JSON.stringify({ clientId: clientId }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        const agreements = response.d;
-
-                        let tableBody = "";
-
-
-                        agreements.forEach((agreement, index) => {
-                            tableBody += `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${agreement.AgreementID}</td>
-                                 <td>${agreement.TotalFund}</td> 
-                                 <td>${agreement.Term}</td>
-                                   <td>${agreement.StartDate}</td>
-                                   <td>${agreement.ExpireDate}</td>
-                                     <td>${agreement.Priority}</td>
-                                      <td>${agreement.Status}</td>
-                                      <td>${agreement.NoOfPayments}</td>
-<td><button type="button" class="btn btn-primary btn-sm action-button" onclick="window.location.href='agreementDetails.aspx?AgreementID=${agreement.AgreementID}'">Action</button></td>
-
-
-                            </tr>`
-                        });
-
-                        $("#data-table tbody").html(tableBody);
-                    },
-                    error: function (error) {
-                        console.error("Error fetching data:", error.responseText);
-                    }
-                });
-            } else {
-                console.error("ClientId not found in the URL.");
-            }
-           
-        });
-    </script>
-
-
-
-        <style>
+ <style>
         /* General Reset */
         body {
             font-family: 'Arial', sans-serif;
@@ -303,7 +195,208 @@ table a {
         .badge{
             padding:9px !important;
         }
+        .table-container{
+            margin-top: 66px !important;
+        }
     </style>
+
+      
+    <script>
+        $(document).ready(function () {
+            var table = $('#data-table').DataTable({
+                pageLength: 10,
+                responsive: true,
+                dom: 'Bfrtip',
+                lengthMenu: [10, 25, 50, 100]
+            });
+
+            $('.tab-btn').click(function () {
+                $('.tab-btn').removeClass('active');
+                $(this).addClass('active');
+                $('.table-container table').hide();
+                $($(this).data('target')).show();
+            });
+
+            $('#status-filter').on('change', function () {
+                const filterValue = $(this).val();
+                table.column(6).search(filterValue).draw();
+            });
+
+            var clientId = sessionStorage.getItem("ClientId");
+
+            if (!clientId) {
+                console.error("ClientId not found in the URL.");
+            } else {
+                console.log("Client ID found:", clientId);
+
+                // ✅ Fetch Client Details
+                $.ajax({
+                    type: "POST",
+                    url: "profile.aspx/GetClientDetails",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ clientId: clientId }),
+                    dataType: "json",
+                    success: function (response) {
+                        const data = response.d;
+                        if (data && data.length > 0) {
+                            const client = data[0];
+                            $(".profile-details").html(`
+                        <h2>Client Details</h2>
+                        <p><strong>Client Name:</strong> ${client.ClientName}</p>
+                        <p><strong>Client ID:</strong> ${clientId}</p>
+                        <p><strong>Joining Date:</strong> ${client.JoiningDate}</p>
+                        <p><strong>Refer By:</strong> ${client.ReferBy}</p>
+                        <p><strong>Mobile:</strong> ${client.MobileNo}</p>
+                        <p><strong>Total Agreement:</strong> ${client.TotalAgreements}</p>
+                        <p><strong>Current Capital:</strong> ${client.CurrentCapital}</p>
+                        <p><strong>Total Profit:</strong> ${client.TotalProfit}</p>
+                        <p><strong>Nominee:</strong> ${client.NomineeName}</p>
+                        <p><strong>District:</strong> ${client.District}</p>
+                        <button>Edit</button>
+                    `);
+                        } else {
+                            alert("No data found for the provided Client ID.");
+                        }
+                    },
+                    error: function (err) {
+                        console.error("Error fetching client details:", err);
+                    }
+                });
+
+                // ✅ Fetch Agreement Details
+                $.ajax({
+                    type: "POST",
+                    url: "profile.aspx/GetAgreementsByClientId",
+                    data: JSON.stringify({ clientId: clientId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        const agreements = response.d;
+                        let tableContent = "";
+                        if (agreements.length > 0) {
+                            agreements.forEach((agreement, index) => {
+                                tableContent += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${agreement.AgreementID}</td>
+                                <td>${agreement.TotalFund}</td>
+                                <td>${agreement.Term}</td>
+                                <td>${agreement.StartDate}</td>
+                                <td>${agreement.ExpireDate}</td>
+                                <td>${agreement.Priority}</td>
+                                <td class="${agreement.Status === 'Running' ? 'text-success' : 'text-danger'}">
+                                    ${agreement.Status}
+                                </td>
+                                <td>${agreement.NoOfPayments}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm action-button"
+                                        onclick="window.location.href='agreementDetails.aspx?AgreementID=${agreement.AgreementID}'">
+                                        View
+                                    </button>
+                                </td>
+                            </tr>`;
+                            });
+                        } else {
+                            tableContent = `<tr><td colspan="10" class="text-center">No agreements found.</td></tr>`;
+                        }
+                        $("#document-table").html(`
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Sl No</th>
+                            <th>Agreement Id</th>
+                            <th>Funds</th>
+                            <th>Term</th>
+                            <th>Start Date</th>
+                            <th>Expiry Date</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>No of Payment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableContent}</tbody>
+                `);
+                    },
+                    error: function (error) {
+                        console.error("Error fetching agreement data:", error.responseText);
+                    }
+                });
+            }
+
+            // ✅ FIX: Ensure Button Exists Before Binding
+            $(document).on("click", "#transaction", function () {
+                console.log("Current clientId:", clientId); // Added logging
+
+                if (!clientId) {
+                    alert("Client ID is missing!");
+                    return;
+                }
+
+                console.log("Fetching transactions for Client ID:", clientId);
+                $.ajax({
+                    type: "POST",
+                    url: "profile.aspx/GetTransactionHistory",
+                    data: JSON.stringify({ clientId: clientId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        console.log("Full response:", response);
+
+                        // Parse the nested response
+                        const responseData = response.d;
+
+                        console.log("Response success:", responseData.success);
+                        console.log("Response data:", responseData.data);
+
+                        if (!responseData.success) {
+                            alert(responseData.message);
+                            return;
+                        }
+
+                        const transactions = responseData.data; // Note the change here
+                        console.log("Transactions:", transactions);
+
+                        let tableContent = "";
+                        if (transactions && transactions.length > 0) {
+                            transactions.forEach((transaction, index) => {
+                                tableContent += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${transaction.AgreementId}</td>
+                        <td>${transaction.DepositAmount}</td>
+                        <td>${transaction.DepositDate}</td>
+                        <td>${transaction.WithdrawalAmount}</td>
+                        <td>${transaction.WithdrawalDate}</td>
+                        <td>${transaction.ActiveFund}</td>
+                        <td>${transaction.Profit}</td>
+                    </tr>`;
+                            });
+
+                            console.log("Generated table content:", tableContent);
+                            $("#transactionx tbody").html(tableContent);
+                            $("#transactionx").show();
+                        } else {
+                            console.warn("No transactions found");
+                            alert("No transaction history found.");
+                            $("#transactionx").hide();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX Error:", {
+                            status: status,
+                            error: error,
+                            responseText: xhr.responseText
+                        });
+                        alert("An error occurred while fetching data.");
+                    }
+                });
+            });
+        });
+           
+    </script>
+
+
+
 </head>
 <body>
     <form id="form1" runat="server">
@@ -339,46 +432,64 @@ table a {
             <!-- Right Section: Table and Tabs -->
             <div class="main-content">
                 <!-- Tabs -->
-                <div class="tabs">
-                    <button type="button" class="tab-btn active"><a href="profile.aspx" style="text-decoration: none; color: #fff;">Documents</a></button>
-					<button type="button" class="tab-btn"><a href="profile2.aspx" style="text-decoration: none; color: #fff;">Payment History</a></button>
-                </div>
+             
+        <div class="tabs">
+            <button type="button" class="tab-btn active" id="document" data-target="#document-table">Document</button>
+            <button type="button" class="tab-btn" id="transaction" data-target="#transaction-history-table">Transaction History</button>
+        </div>
 
-                <!-- Table -->
-                <div class="table-container">
-                    <div class="filters">
-                        <select id="funds-filter">
-                            <option value="">Choose status</option>
-                            <option value="500,000.00">500,000.00</option>
-                            <option value="200,000.00">200,000.00</option>
-                        </select>
-                    </div>
+        <div class="table-container">
+            <!-- Document Table -->
+            <table id="document-table" class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Aggrement Id</th>
+                        <th>Funds</th>
+                        <th>Term</th>
+                        <th>Start Date</th>
+                        <th>Expairy Date</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>No of payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                </tbody>
+            </table>
 
-<table id="data-table">
-    <thead>
+            <!-- Profit History Table -->
+
+            <!-- Transaction History Table -->
+<table id="transactionx" class="table table-bordered table-striped" style="display: none;">
+    <thead class="table-dark">
         <tr>
             <th>Sl No</th>
-            <th>Agreement Id</th>
-            <th>Funds (INR)</th>
-            <th>Term</th>
-            <th>Start Date</th>
-            <th>Expiry Date</th>
-            <th>Priority</th>
-            <th>Status</th>
-            <th>No of Payments</th>
-            <th>Action</th>
+            <th>AgreementId</th>
+            <th>DepositAmount</th>
+            <th>DepositDate</th>
+            <th>WithdrawalAmount</th>
+            <th>WithdrawalDate</th>
+            <th>ActiveFund</th>
+            <th>Profit</th>
         </tr>
     </thead>
     <tbody>
-       
     </tbody>
 </table>
+        </div>
+    </div>
+
+
+
             </div>
         </div>
 
                </div>
 
-        </div>
+        
     </form>
 
  
