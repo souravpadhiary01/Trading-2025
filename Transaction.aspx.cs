@@ -213,6 +213,42 @@ public partial class Transaction : System.Web.UI.Page
 
         }
     }
+    public class ReferByOption
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    [WebMethod]
+    public static List<ReferByOption> FetchReferByOptions()
+    {
+        List<ReferByOption> referByOptions = new List<ReferByOption>();
+
+        string connectionString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
+        string query = "SELECT [id], [ClientName] FROM [tradedata].[tradeadmin].[registrationsx]"; // Fetching id and ClientName
+
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            SqlCommand cmd = new SqlCommand(query, connection);
+            connection.Open();
+
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    referByOptions.Add(new ReferByOption
+                    {
+                        Id = reader["id"].ToString(),
+                        Name = reader["ClientName"].ToString() // Corrected column name from "name" to "ClientName"
+                    });
+                }
+            }
+        }
+
+        return referByOptions;
+    }
+
+
 
 
 }

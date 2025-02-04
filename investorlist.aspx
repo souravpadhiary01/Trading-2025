@@ -10,7 +10,6 @@
     <title>Investor lists</title>
     <ucx:MyUserControl1 runat="server" />
 
-
  <style>
         body {
             font-family: Arial, sans-serif;

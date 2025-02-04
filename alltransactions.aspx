@@ -12,7 +12,7 @@
     <ucx:MyUserControl1 runat="server" />
 
 
-      <script>
+  <script>
 
           $(document).ready(function () {
 
@@ -179,8 +179,47 @@
                       window.location.reload();
                   }
               });
+
+
+              $.ajax({
+                  type: "POST",
+                  url: "alltransactions.aspx/FetchClientnamex", // The backend method URL to fetch 'Refer By' options
+                  contentType: "application/json; charset=utf-8", // Data type
+                  dataType: "json", // Expecting a JSON response
+                  success: function (response) {
+                      console.log(response); // Log the response to inspect the structure
+
+                      if (response.d && response.d.length > 0) {
+                          // If the response is valid and contains data
+                          var referBySelect = $("#clientIdx");
+
+                          // Clear existing options
+                          referBySelect.empty();
+
+                          // Add a default "Select" option
+                          referBySelect.append('<option value="">Select Refer By</option>');
+
+                          // Loop through the fetched data and create option elements
+                          $.each(response.d, function (index, item) {
+                              console.log(item); // Log each item to see its structure
+
+                              // Accessing 'Id' and 'Name' properties in the response
+                              referBySelect.append('<option value="' + item.Id + '">' + item.Name + '</option>');
+                          });
+                      } else {
+                          // If no data found, show a default message or leave empty
+                          referBySelect.append('<option value="">No options available</option>');
+                      }
+                  },
+                  error: function (xhr, status, error) {
+                      console.error("Error fetching Refer By options:", error);
+                      alert("An error occurred while fetching 'Refer By' options. Please try again later.");
+                  }
+              });
+
+
           });
-      </script>
+  </script>
 
   
     }
@@ -474,6 +513,7 @@
                 </table>
             </div>
         </div>
+        clientIdx
         
         <!-- New Transaction Modal -->
          <div class="modal fade" id="newTransactionModal" tabindex="-1" aria-labelledby="newTransactionModalLabel" aria-hidden="true">
@@ -485,10 +525,12 @@
                     </div>
                     <div class="modal-body">
                         <form id="newTransactionForm">
-                            <div class="mb-3">
-                                <label for="clientId" class="form-label">Client ID</label>
-                                <input type="text" class="form-control" id="clientIdx" name="clientIdx" placeholder="Enter Client ID" required>
-                            </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">clientId:</label>
+                                    <select class="form-select" id="clientIdx" required>
+                                       
+                                    </select>
+                                </div>
                             <div class="mb-3">
                                 <label for="clientName" class="form-label">Client Name</label>
                                 <input type="text" class="form-control" id="clientName" placeholder="Auto-fetch once ID is entered" disabled>

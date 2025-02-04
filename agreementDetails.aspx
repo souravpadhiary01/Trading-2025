@@ -10,8 +10,7 @@
 <head runat="server">
     <ucx:MyUserControl1 runat="server" />
     <title></title>
-
-    <style>
+  <style>
         .agreement-container {
             max-width: 1200px;
             margin: auto;

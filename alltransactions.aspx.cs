@@ -121,7 +121,41 @@ WHERE
 
         return clientName;
     }
-   
+
+    public class FetchClientname
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    [WebMethod]
+    public static List<FetchClientname> FetchClientnamex()
+    {
+        List<FetchClientname> FetchClientnames = new List<FetchClientname>();
+
+        string connectionString = ConfigurationManager.ConnectionStrings["tradedata"].ConnectionString;
+        string query = "SELECT [id], [ClientName] FROM [tradedata].[tradeadmin].[registrations]"; // Fetching id and ClientName
+
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            SqlCommand cmd = new SqlCommand(query, connection);
+            connection.Open();
+
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    FetchClientnames.Add(new FetchClientname
+                    {
+                        Id = reader["id"].ToString(),
+                        Name = reader["ClientName"].ToString() // Corrected column name from "name" to "ClientName"
+                    });
+                }
+            }
+        }
+
+        return FetchClientnames;
+    }
 
 
 }

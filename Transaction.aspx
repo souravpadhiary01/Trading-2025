@@ -9,7 +9,7 @@
     <ucx:MyUserControl1 runat="server" />
     <title>Register New Investor</title>
     <!-- Bootstrap CSS -->
-    <style>
+  <style>
         body {
             background-color: white;
         }
@@ -330,8 +330,48 @@
             });
 
 
+            $.ajax({
+                type: "POST",
+                url: "Transaction.aspx/FetchReferByOptions", // The backend method URL to fetch 'Refer By' options
+                contentType: "application/json; charset=utf-8", // Data type
+                dataType: "json", // Expecting a JSON response
+                success: function (response) {
+                    console.log(response); // Log the response to inspect the structure
 
-        });</script>
+                    if (response.d && response.d.length > 0) {
+                        // If the response is valid and contains data
+                        var referBySelect = $("#referBy");
+
+                        // Clear existing options
+                        referBySelect.empty();
+
+                        // Add a default "Select" option
+                        referBySelect.append('<option value="">Select Refer By</option>');
+
+                        // Loop through the fetched data and create option elements
+                        $.each(response.d, function (index, item) {
+                            console.log(item); // Log each item to see its structure
+
+                            // Accessing 'Id' and 'Name' properties in the response
+                            referBySelect.append('<option value="' + item.Id + '">' + item.Name + '</option>');
+                        });
+                    } else {
+                        // If no data found, show a default message or leave empty
+                        referBySelect.append('<option value="">No options available</option>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching Refer By options:", error);
+                    alert("An error occurred while fetching 'Refer By' options. Please try again later.");
+                }
+            });
+
+          
+
+
+        });
+
+    </script>
 
 </head>
 <body>
@@ -374,11 +414,7 @@
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Refer By:</label>
                                     <select class="form-select" id="referBy" required>
-                                        <option selected disabled>Choose From Option</option>
-                                        <option>SK Danish Rahim</option>
-                                        <option>Sagar Maharana</option>
-                                        <option>Mirza Talif Baig</option>
-                                        <option>Preeti Krushna Behera</option>
+                                       
                                     </select>
                                 </div>
                                 <div class="mb-3">

@@ -11,8 +11,7 @@
 
         <ucx:MyUserControl1 runat="server" />
     <title></title>
-
-    <style>
+  <style>
         body {
   font-family: 'Arial', sans-serif;
   background-color: #f0f8ff;
